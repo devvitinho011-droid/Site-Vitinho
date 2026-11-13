@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+/* ============================================================
+   TEMA — quando chegarem as cores/artes dele, é aqui que muda.
+   Visual de propósito neutro: só a base para desenvolver em cima.
+   ============================================================ */
+:root {
+  --bg: #0b0b0c;          /* fundo da página */
+  --surface: #161618;     /* fundo dos botões/cards */
+  --border: #2a2a2e;      /* bordas */
+  --text: #f4f4f5;        /* texto principal */
+  --muted: #a1a1aa;       /* texto secundário */
+  --accent: #e4e4e7;      /* cor de destaque (botão principal, hover) */
+  --accent-text: #0b0b0c; /* texto em cima do destaque */
+  --radius: 14px;
+}
+
+@theme {
+  --font-sans: var(--font-main), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ---------- Página pública ---------- */
+.avatar {
+  width: 7rem;
+  height: 7rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  border: 3px solid var(--border);
+  background: var(--surface);
+}
+
+.social-btn {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  transition: color .15s, border-color .15s, transform .15s;
+}
+.social-btn:hover { color: var(--text); border-color: var(--accent); transform: translateY(-2px); }
+
+.link-btn {
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 600;
+  transition: border-color .15s, transform .15s, background-color .15s;
+}
+.link-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+.link-btn.is-highlight {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+.link-btn.is-highlight:hover { filter: brightness(1.08); }
+
+/* ---------- Painel /admin (fica neutro mesmo depois do tema) ---------- */
+.btn-primary {
+  border-radius: 12px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 700;
+  transition: filter .15s;
+}
+.btn-primary:hover { filter: brightness(1.08); }
+.btn-primary:disabled { opacity: .5; }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .55rem .9rem;
+  border-radius: 10px;
+  font-size: .875rem;
+  font-weight: 600;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.btn-ghost:hover { border-color: var(--muted); }
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  padding: 1.25rem;
+  border-radius: 16px;
+  background: #111113;
+  border: 1px solid var(--border);
+}
+.panel-title { font-weight: 800; font-size: 1.05rem; }
+.hint { font-size: .8rem; color: var(--muted); }
+.lbl { display: flex; flex-direction: column; gap: .3rem; font-size: .8rem; color: var(--muted); }
+.row { display: flex; gap: .5rem; align-items: center; }
+
+.field {
+  width: 100%;
+  min-width: 0;
+  padding: .6rem .75rem;
+  border-radius: 10px;
+  background: #0b0b0c;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: .95rem;
+  outline: none;
+}
+.field:focus { border-color: var(--accent); }
+
+.icon-btn { padding: .5rem; color: var(--muted); }
+.icon-btn:hover { color: var(--text); }
+
+/* Barra de rolagem (mesmo esquema do barr4k, nas cores do tema) */
+html { scrollbar-color: var(--border) var(--bg); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 9999px; border: 2px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ---------- Animações ---------- */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-rise { animation: rise .45s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
