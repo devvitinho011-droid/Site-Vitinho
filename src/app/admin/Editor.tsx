@@ -36,6 +36,7 @@ export default function Editor({ initial, dbReady }: { initial: PageConfig; dbRe
   const [cfg, setCfg] = useState<PageConfig>(initial);
   const [status, setStatus] = useState<{ type: "ok" | "err" | "busy"; msg: string } | null>(null);
   const [uploading, setUploading] = useState<string | null>(null);
+  const [problems, setProblems] = useState<string[]>([]);
 
   const setProfile = (patch: Partial<PageConfig["profile"]>) => setCfg((c) => ({ ...c, profile: { ...c.profile, ...patch } }));
   const setLinks = (links: LinkItem[]) => setCfg((c) => ({ ...c, links }));
@@ -66,6 +67,7 @@ export default function Editor({ initial, dbReady }: { initial: PageConfig; dbRe
     });
     const json = await res.json().catch(() => ({}));
     if (res.status === 401) return window.location.reload();
+    setProblems(Array.isArray(json.problems) ? json.problems : []);
     if (!res.ok) return setStatus({ type: "err", msg: json.error || "Erro ao salvar." });
     setCfg(json.config);
     setStatus({ type: "ok", msg: "Salvo! A página já está atualizada." });
@@ -157,7 +159,7 @@ export default function Editor({ initial, dbReady }: { initial: PageConfig; dbRe
               <select className="field flex-1 sm:flex-none sm:w-40" value={s.icon} onChange={(e) => editSocial(i, { icon: e.target.value as IconName, label: ICON_LABELS[e.target.value as IconName] })}>
                 {ICON_NAMES.map((n) => <option key={n} value={n}>{ICON_LABELS[n]}</option>)}
               </select>
-              <input className="field order-last sm:order-none basis-full sm:basis-auto sm:flex-1" placeholder="https://..." value={s.url} onChange={(e) => editSocial(i, { url: e.target.value })} />
+              <input className="field order-last sm:order-none basis-full sm:basis-auto sm:flex-1" placeholder="https://... ou @usuario" value={s.url} onChange={(e) => editSocial(i, { url: e.target.value })} />
               <RowActions onUp={() => setSocials(move(cfg.socials, i, -1))} onDown={() => setSocials(move(cfg.socials, i, 1))} onDelete={() => setSocials(cfg.socials.filter((_, k) => k !== i))} />
             </div>
           ))}
@@ -191,11 +193,18 @@ export default function Editor({ initial, dbReady }: { initial: PageConfig; dbRe
 
       {/* Barra de salvar fixa embaixo */}
       <div className="fixed bottom-0 inset-x-0 z-20 p-4 bg-gradient-to-t from-black via-black/90 to-transparent flex justify-center">
-        <div className="w-full max-w-2xl flex items-center gap-3">
+        <div className="w-full max-w-2xl flex flex-col gap-2">
+          {problems.length > 0 && (
+            <ul className="rounded-xl border border-red-500/40 bg-red-950/80 text-red-200 text-sm p-3 list-disc pl-6 max-h-40 overflow-auto">
+              {problems.map((p, i) => <li key={i}>{p}</li>)}
+            </ul>
+          )}
+          <div className="flex items-center gap-3">
           <p className={`flex-1 text-sm truncate ${status?.type === "err" ? "text-red-400" : status?.type === "ok" ? "text-green-400" : "text-gray-400"}`}>
             {status?.type === "ok" && <FiCheck className="inline mr-1" />}{status?.msg}
           </p>
           <button onClick={save} disabled={status?.type === "busy" || !!uploading || !dbReady} className="btn-primary px-8 py-3">Salvar</button>
+          </div>
         </div>
       </div>
     </main>

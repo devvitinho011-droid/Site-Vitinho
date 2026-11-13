@@ -46,6 +46,47 @@ export function safeUrl(v: unknown): string {
   return "";
 }
 
+// "@vitinho" ou "vitinho" vira o link do perfil na rede escolhida; e-mail solto vira mailto:
+const PROFILE_URL: Partial<Record<IconName, (u: string) => string>> = {
+  twitch: (u) => `https://www.twitch.tv/${u}`,
+  youtube: (u) => `https://www.youtube.com/@${u}`,
+  instagram: (u) => `https://www.instagram.com/${u}`,
+  x: (u) => `https://x.com/${u}`,
+  tiktok: (u) => `https://www.tiktok.com/@${u}`,
+  kick: (u) => `https://kick.com/${u}`,
+};
+
+export function smartUrl(v: unknown, kind?: IconName): string {
+  const s = str(v, 1000);
+  if (!s) return "";
+  if (/^[^\s@/]+@[^\s@/]+\.[^\s@/]+$/.test(s)) return "mailto:" + s; // e-mail solto
+  if (kind === "whatsapp" && /^[\d\s()+-]{8,}$/.test(s)) return "https://wa.me/" + s.replace(/\D/g, "");
+  const handle = s.match(/^@?([\w.]{2,40})$/);
+  if (handle && kind && PROFILE_URL[kind] && !handle[1].includes("..") && !/\.(com|br|net|tv|gg|app)$/i.test(handle[1])) {
+    return PROFILE_URL[kind]!(handle[1]);
+  }
+  return safeUrl(s);
+}
+
+// Confere tudo e devolve a lista do que está errado, em português, pra mostrar no painel.
+// Itens totalmente vazios (adicionados e não preenchidos) são só ignorados.
+export function validateConfig(raw: unknown): { config: PageConfig; problems: string[] } {
+  const r = (raw ?? {}) as Record<string, any>;
+  const problems: string[] = [];
+  (Array.isArray(r.socials) ? r.socials : []).forEach((s: any, i: number) => {
+    const typed = str(s?.url);
+    if (typed && !smartUrl(typed, icon(s?.icon))) problems.push(`Rede ${i + 1} (${str(s?.label) || s?.icon}): link "${typed}" não é válido.`);
+  });
+  (Array.isArray(r.links) ? r.links : []).forEach((l: any, i: number) => {
+    const label = str(l?.label), typed = str(l?.url);
+    if (!label && !typed) return;
+    if (!label) problems.push(`Botão ${i + 1}: falta o texto do botão.`);
+    if (!typed) problems.push(`Botão ${i + 1} (${label}): falta o link.`);
+    else if (!smartUrl(typed, icon(l?.icon))) problems.push(`Botão ${i + 1} (${label}): link "${typed}" não é válido.`);
+  });
+  return { config: sanitizeConfig(raw), problems };
+}
+
 export function sanitizeConfig(raw: unknown): PageConfig {
   const r = (raw ?? {}) as Record<string, any>;
   const p = (r.profile ?? {}) as Record<string, any>;
@@ -63,12 +104,12 @@ export function sanitizeConfig(raw: unknown): PageConfig {
     },
     socials: (Array.isArray(r.socials) ? r.socials : []).slice(0, 12).flatMap((s: any) => {
       const i = icon(s?.icon);
-      const url = safeUrl(s?.url);
+      const url = smartUrl(s?.url, i);
       return i && url ? [{ icon: i, url, label: str(s?.label, 40) || i }] : [];
     }),
     links: (Array.isArray(r.links) ? r.links : []).slice(0, 30).flatMap((l: any) => {
       const label = str(l?.label, 80);
-      const url = safeUrl(l?.url);
+      const url = smartUrl(l?.url, icon(l?.icon));
       if (!label || !url) return [];
       return [{ label, url, icon: icon(l?.icon), sub: str(l?.sub, 80) || undefined, highlight: !!l?.highlight }];
     }),
