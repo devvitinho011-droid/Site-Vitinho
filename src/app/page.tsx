@@ -28,9 +28,9 @@ export default async function Home() {
       )}
 
       {/* 2. Links */}
-      <section id="links" className="relative min-h-svh flex justify-center px-4 py-8 sm:py-12">
+      <section id="links" className="relative min-h-svh flex flex-col items-center px-4 pt-8 pb-6 sm:pt-12">
         <div className="page-bg" />
-        <div className="w-full max-w-xl flex flex-col items-center animate-rise">
+        <div className="w-full max-w-xl flex-1 flex flex-col items-center animate-rise">
           {profile.banner && (
             <div className="banner">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -78,7 +78,7 @@ export default async function Home() {
             })}
           </ul>
 
-          <footer className="mt-12 text-xs text-[var(--muted)]">© {new Date().getFullYear()} {profile.name}</footer>
+          <footer className="mt-auto pt-12 text-xs text-[var(--muted)]">© 2026 {profile.name}</footer>
         </div>
       </section>
     </main>
