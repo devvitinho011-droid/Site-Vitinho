@@ -1,6 +1,7 @@
 import { FiArrowUpRight, FiChevronDown } from "react-icons/fi";
 import { getConfig } from "@/lib/config";
 import { ICONS } from "@/lib/icons";
+import HeroVideo from "./HeroVideo";
 
 const external = (url: string) => (url.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {});
 
@@ -13,11 +14,7 @@ export default async function Home() {
       {/* 1. Tela inicial: arte em loop, tela cheia. Sem arte cadastrada, a página abre direto nos links. */}
       {profile.heroVideo && (
         <section className="relative h-svh overflow-hidden">
-          <video autoPlay loop muted playsInline preload="auto" poster={profile.heroPoster || undefined}
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none">
-            {profile.heroVideoMobile && <source src={profile.heroVideoMobile} media="(max-width: 768px)" />}
-            <source src={profile.heroVideo} />
-          </video>
+          <HeroVideo desktop={profile.heroVideo} mobile={profile.heroVideoMobile} poster={profile.heroPoster} />
           <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-[var(--bg)] pointer-events-none" />
           <a href="#links" aria-label="Ver links"
             className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors">
