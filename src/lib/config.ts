@@ -18,7 +18,8 @@ export const getConfig = unstable_cache(
       return defaultConfig;
     }
   },
-  [CONFIG_TAG],
+  // Chave inclui o deploy: a cada deploy novo o padrão do código é relido (o salvar do admin usa a tag)
+  [CONFIG_TAG, process.env.VERCEL_DEPLOYMENT_ID ?? "local"],
   { tags: [CONFIG_TAG] },
 );
 

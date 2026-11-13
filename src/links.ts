@@ -39,9 +39,9 @@ export const defaultConfig: PageConfig = {
     bio: "Live na Twitch. Chega mais!",
     avatar: "/avatar.jpg",
     banner: "/banner.webp",
-    heroVideo: "",
-    heroVideoMobile: "",
-    heroPoster: "",
+    heroVideo: "/hero.mp4",
+    heroVideoMobile: "/hero-mobile.mp4",
+    heroPoster: "/hero-poster.jpg",
   },
   socials: [
     { icon: "twitch", url: "https://www.twitch.tv/vitinho", label: "Twitch" },

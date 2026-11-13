@@ -10,7 +10,8 @@ const marker = Permanent_Marker({ variable: "--font-marker", weight: "400", subs
 
 export async function generateMetadata(): Promise<Metadata> {
   const { profile } = await getConfig();
-  return { title: profile.name, description: profile.bio };
+  // Nome da aba fixo (marca/domínio dele); o ícone vem de app/icon.png
+  return { title: "ovitinho", description: profile.bio || `Links do ${profile.name}` };
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
