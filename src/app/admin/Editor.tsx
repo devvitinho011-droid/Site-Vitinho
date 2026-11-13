@@ -43,7 +43,7 @@ export default function Editor({ initial, dbReady }: { initial: PageConfig; dbRe
   const editLink = (i: number, patch: Partial<LinkItem>) => setLinks(cfg.links.map((l, k) => (k === i ? { ...l, ...patch } : l)));
   const editSocial = (i: number, patch: Partial<Social>) => setSocials(cfg.socials.map((s, k) => (k === i ? { ...s, ...patch } : s)));
 
-  const pick = (field: "avatar" | "heroVideo" | "heroVideoMobile" | "heroPoster", kind: Kind) => async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const pick = (field: "avatar" | "banner" | "heroVideo" | "heroVideoMobile" | "heroPoster", kind: Kind) => async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
@@ -76,7 +76,7 @@ export default function Editor({ initial, dbReady }: { initial: PageConfig; dbRe
     window.location.reload();
   };
 
-  const UploadBtn = ({ field, kind, label }: { field: "avatar" | "heroVideo" | "heroVideoMobile" | "heroPoster"; kind: Kind; label: string }) => (
+  const UploadBtn = ({ field, kind, label }: { field: "avatar" | "banner" | "heroVideo" | "heroVideoMobile" | "heroPoster"; kind: Kind; label: string }) => (
     <label className="btn-ghost cursor-pointer shrink-0">
       <FiUpload /> {uploading === field ? "Enviando..." : label}
       <input type="file" hidden accept={kind === "image" ? "image/*" : "video/mp4,video/webm"} onChange={pick(field, kind)} disabled={!!uploading || !dbReady} />
@@ -134,6 +134,15 @@ export default function Editor({ initial, dbReady }: { initial: PageConfig; dbRe
               <UploadBtn field="avatar" kind="image" label="Trocar foto" />
               <input className="field text-xs" placeholder="ou link da imagem" value={cfg.profile.avatar} onChange={(e) => setProfile({ avatar: e.target.value })} />
             </div>
+          </div>
+          <label className="lbl">Banner (arte larga no topo, ideal 1500x500)</label>
+          {cfg.profile.banner && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={cfg.profile.banner} alt="" className="w-full aspect-[3/1] object-cover rounded-xl border border-white/10" />
+          )}
+          <div className="flex gap-2">
+            <input className="field" placeholder="Link da imagem do banner (vazio = sem banner)" value={cfg.profile.banner} onChange={(e) => setProfile({ banner: e.target.value })} />
+            <UploadBtn field="banner" kind="image" label="Banner" />
           </div>
           <label className="lbl">Nome<input className="field" value={cfg.profile.name} onChange={(e) => setProfile({ name: e.target.value })} /></label>
           <label className="lbl">@<input className="field" value={cfg.profile.handle} onChange={(e) => setProfile({ handle: e.target.value })} /></label>

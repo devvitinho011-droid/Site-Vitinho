@@ -21,19 +21,28 @@ export default async function Home() {
           <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-[var(--bg)] pointer-events-none" />
           <a href="#links" aria-label="Ver links"
             className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.25em]">Ver links</span>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.25em]">Ver meus links</span>
             <FiChevronDown className="w-7 h-7 animate-bounce" />
           </a>
         </section>
       )}
 
       {/* 2. Links */}
-      <section id="links" className="min-h-svh flex justify-center px-5 py-14">
-        <div className="w-full max-w-md flex flex-col items-center animate-rise">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={profile.avatar} alt={profile.name} width={112} height={112} className="avatar" />
+      <section id="links" className="relative min-h-svh flex justify-center px-4 py-8 sm:py-12">
+        <div className="page-bg" />
+        <div className="w-full max-w-xl flex flex-col items-center animate-rise">
+          {profile.banner && (
+            <div className="banner">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={profile.banner} alt="" />
+            </div>
+          )}
 
-          <h1 className="text-2xl font-extrabold mt-5 text-center">{profile.name}</h1>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={profile.avatar} alt={profile.name} width={112} height={112}
+            className={`avatar relative z-10 ${profile.banner ? "-mt-14" : ""}`} />
+
+          <h1 className="name-tag mt-5 text-center">{profile.name}</h1>
           {profile.handle && <p className="text-sm mt-1 text-[var(--muted)]">{profile.handle}</p>}
           {profile.bio && <p className="text-center text-[15px] mt-3 max-w-xs text-[var(--muted)]">{profile.bio}</p>}
 
@@ -50,7 +59,7 @@ export default async function Home() {
             </div>
           )}
 
-          <ul className="w-full flex flex-col gap-3 mt-8">
+          <ul className="w-full max-w-md flex flex-col gap-3 mt-8">
             {links.map((l, i) => {
               const Icon = l.icon ? ICONS[l.icon] : null;
               return (

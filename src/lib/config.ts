@@ -54,6 +54,8 @@ export function sanitizeConfig(raw: unknown): PageConfig {
       handle: str(p.handle, 40),
       bio: str(p.bio, 200),
       avatar: safeUrl(p.avatar) || defaultConfig.profile.avatar,
+      // Salvo antes de existir o campo = usa o banner padrão; string vazia = sem banner
+      banner: p.banner === undefined ? defaultConfig.profile.banner : safeUrl(p.banner),
       heroVideo: safeUrl(p.heroVideo),
       heroVideoMobile: safeUrl(p.heroVideoMobile),
       heroPoster: safeUrl(p.heroPoster),
