@@ -16,7 +16,7 @@ export default async function Home() {
       {/* Como no barr4k: vídeo de celular até 768px, de PC acima disso; a capa aparece enquanto carrega */}
       {/* 1. Tela inicial: arte em loop, tela cheia. Sem arte cadastrada, a página abre direto nos links. */}
       {profile.heroVideo && (
-        <section className="relative h-svh overflow-hidden">
+        <section data-autoscroll-move className="relative h-svh overflow-hidden">
           <HeroVideo desktop={profile.heroVideo} mobile={profile.heroVideoMobile} poster={profile.heroPoster} />
           {/* Rolagem travada por 3,5 s na arte; depois desce sozinho pros links (em 1,3 s) e libera */}
           <AutoScroll target="links" delay={3500} duration={1300} />
@@ -27,7 +27,8 @@ export default async function Home() {
       {/* 2. Links */}
       <section id="links" className="relative min-h-svh flex flex-col items-center px-4 pt-8 pb-6 sm:pt-12">
         <div className="page-bg" />
-        <div className="w-full max-w-xl flex-1 flex flex-col items-center animate-rise">
+        {/* data-autoscroll-move: desliza junto com a arte na descida automática (o fundo fixo fica parado) */}
+        <div data-autoscroll-move className="w-full max-w-xl flex-1 flex flex-col items-center animate-rise">
           {profile.banner && (
             <div className="banner">
               {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -4,13 +4,19 @@ import { useEffect } from "react";
 
 // Ao entrar: a pessoa fica presa na arte da tela inicial (não rola) por alguns segundos.
 // Passado o tempo, a página desce sozinha até os links e a rolagem fica liberada de vez.
+//
+// A descida NÃO rola a página quadro a quadro (isso roda no processador e engasga no celular
+// enquanto o vídeo toca). Em vez disso, desliza na placa de vídeo os blocos marcados com
+// data-autoscroll-move (transform, que não trava) e, no fim, troca pela rolagem de verdade
+// no mesmo quadro — o olho não vê a troca.
 const SCROLL_KEYS = new Set([" ", "PageDown", "PageUp", "ArrowDown", "ArrowUp", "End", "Home"]);
+const EASE = "cubic-bezier(0.65, 0, 0.35, 1)"; // começa e termina devagar
 
 export default function AutoScroll({ target, delay = 5000, duration = 1600 }: { target: string; delay?: number; duration?: number }) {
   useEffect(() => {
     // Sempre começa no topo (o navegador costuma voltar pra posição antiga ao recarregar)
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: "instant" });
 
     const html = document.documentElement;
     const body = document.body;
@@ -37,34 +43,39 @@ export default function AutoScroll({ target, delay = 5000, duration = 1600 }: { 
       window.removeEventListener("keydown", blockKeys);
     };
 
-    let frame = 0;
+    let anims: Animation[] = [];
     const timer = window.setTimeout(() => {
       const el = document.getElementById(target);
       if (!el) return unlock();
       const end = el.getBoundingClientRect().top + window.scrollY;
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduce) {
+      const movers = Array.from(document.querySelectorAll<HTMLElement>("[data-autoscroll-move]"));
+
+      const finish = () => {
+        // Mesmo quadro: rola de verdade e tira o deslocamento → nada pisca
         window.scrollTo({ top: end, behavior: "instant" });
-        return unlock();
-      }
-      // Descida própria (o "smooth" do navegador é rápido demais): dura `duration` ms,
-      // começa e termina devagar. A rolagem só é liberada quando chega nos links.
-      const start = window.scrollY;
-      const t0 = performance.now();
-      const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-      const step = (now: number) => {
-        const t = Math.min(1, (now - t0) / duration);
-        // "instant": o <html> tem scroll-smooth, que atrapalharia cada passo
-        window.scrollTo({ top: start + (end - start) * ease(t), behavior: "instant" });
-        if (t < 1) frame = requestAnimationFrame(step);
-        else unlock();
+        anims.forEach((a) => a.cancel());
+        anims = [];
+        movers.forEach((m) => (m.style.willChange = ""));
+        unlock();
       };
-      frame = requestAnimationFrame(step);
+
+      if (reduce || !movers.length || typeof Element.prototype.animate !== "function") return finish();
+
+      movers.forEach((m) => (m.style.willChange = "transform"));
+      anims = movers.map((m) =>
+        m.animate([{ transform: "translateY(0)" }, { transform: `translateY(${-end}px)` }], {
+          duration,
+          easing: EASE,
+          fill: "forwards",
+        }),
+      );
+      anims[0].finished.then(finish, () => {});
     }, delay);
 
     return () => {
       window.clearTimeout(timer);
-      cancelAnimationFrame(frame);
+      anims.forEach((a) => a.cancel());
       unlock();
     };
   }, [target, delay, duration]);

@@ -23,7 +23,16 @@ export default function HeroVideo({ desktop, mobile, poster }: { desktop: string
 
   useEffect(() => {
     const v = ref.current;
-    if (v && src) v.play().catch(() => {});
+    if (!v || !src) return;
+    v.play().catch(() => {});
+    // Fora da tela, pausa: decodificar vídeo em tela cheia pesa e deixa a rolagem engasgada no celular
+    // Limite de 1%: só encostar na borda da tela (arte acabou de sair) já conta como fora
+    const io = new IntersectionObserver(([e]) => {
+      if (e.intersectionRatio >= 0.01) v.play().catch(() => {});
+      else v.pause();
+    }, { threshold: 0.01 });
+    io.observe(v);
+    return () => io.disconnect();
   }, [src]);
 
   return (

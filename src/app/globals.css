@@ -186,7 +186,9 @@ body {
 }
 
 /* Barra de rolagem (mesmo esquema do barr4k, nas cores do tema) */
-html { scrollbar-color: var(--border) var(--bg); }
+/* scrollbar-gutter: o espaço da barra fica reservado mesmo com a rolagem travada,
+   então a página não pula pro lado quando a rolagem é liberada */
+html { scrollbar-color: var(--border) var(--bg); scrollbar-gutter: stable; }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 9999px; border: 2px solid var(--bg); }
