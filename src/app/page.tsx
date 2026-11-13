@@ -1,4 +1,4 @@
-import { FiArrowUpRight, FiChevronDown } from "react-icons/fi";
+import { FiArrowUpRight } from "react-icons/fi";
 import { getConfig } from "@/lib/config";
 import { ICONS } from "@/lib/icons";
 import HeroVideo from "./HeroVideo";
@@ -18,14 +18,9 @@ export default async function Home() {
       {profile.heroVideo && (
         <section className="relative h-svh overflow-hidden">
           <HeroVideo desktop={profile.heroVideo} mobile={profile.heroVideoMobile} poster={profile.heroPoster} />
-          {/* Fica ~5 s na arte e desce sozinho pros links (a pessoa pode rolar antes, aí não interfere) */}
+          {/* Rolagem travada por 5 s na arte; depois desce sozinho pros links e libera */}
           <AutoScroll target="links" delay={5000} />
           <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-[var(--bg)] pointer-events-none" />
-          <a href="#links" aria-label="Ver links"
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.25em]">Ver meus links</span>
-            <FiChevronDown className="w-7 h-7 animate-bounce" />
-          </a>
         </section>
       )}
 
