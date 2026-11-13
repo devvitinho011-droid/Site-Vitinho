@@ -4,7 +4,7 @@
 
 export const ICON_NAMES = [
   "twitch", "youtube", "instagram", "x", "tiktok", "discord",
-  "whatsapp", "steam", "kick", "spotify", "email", "site", "gift", "shop", "coin", "game",
+  "whatsapp", "steam", "kick", "spotify", "email", "site", "gift", "shop", "coin", "game", "telegram",
 ] as const;
 export type IconName = (typeof ICON_NAMES)[number];
 

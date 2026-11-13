@@ -54,6 +54,7 @@ const PROFILE_URL: Partial<Record<IconName, (u: string) => string>> = {
   x: (u) => `https://x.com/${u}`,
   tiktok: (u) => `https://www.tiktok.com/@${u}`,
   kick: (u) => `https://kick.com/${u}`,
+  telegram: (u) => `https://t.me/${u}`,
 };
 
 export function smartUrl(v: unknown, kind?: IconName): string {
