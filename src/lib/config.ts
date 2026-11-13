@@ -57,9 +57,11 @@ const PROFILE_URL: Partial<Record<IconName, (u: string) => string>> = {
 };
 
 export function smartUrl(v: unknown, kind?: IconName): string {
-  const s = str(v, 1000);
+  // "mailto:mailto:x" (bug antigo) volta a ser um mailto só
+  const s = str(v, 1000).replace(/^(mailto:)+/i, (m) => (m ? "mailto:" : m));
   if (!s) return "";
-  if (/^[^\s@/]+@[^\s@/]+\.[^\s@/]+$/.test(s)) return "mailto:" + s; // e-mail solto
+  if (/^mailto:/i.test(s)) return s;
+  if (/^[^\s@/:]+@[^\s@/]+\.[^\s@/]+$/.test(s)) return "mailto:" + s; // e-mail solto
   if (kind === "whatsapp" && /^[\d\s()+-]{8,}$/.test(s)) return "https://wa.me/" + s.replace(/\D/g, "");
   const handle = s.match(/^@?([\w.]{2,40})$/);
   if (handle && kind && PROFILE_URL[kind] && !handle[1].includes("..") && !/\.(com|br|net|tv|gg|app)$/i.test(handle[1])) {
