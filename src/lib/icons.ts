@@ -1,5 +1,6 @@
 import type { IconType } from "react-icons";
-import { FaTwitch, FaYoutube, FaInstagram, FaTiktok, FaDiscord, FaWhatsapp, FaSteam, FaSpotify, FaCoins, FaGamepad } from "react-icons/fa";
+import { FaTwitch, FaYoutube, FaInstagram, FaTiktok, FaDiscord, FaWhatsapp, FaSteam, FaSpotify, FaGamepad } from "react-icons/fa";
+import { PiPokerChipBold } from "react-icons/pi";
 import { FaXTwitter } from "react-icons/fa6";
 import { SiKick } from "react-icons/si";
 import { FiMail, FiGlobe, FiGift, FiShoppingBag } from "react-icons/fi";
@@ -8,7 +9,7 @@ import type { IconName } from "@/links";
 export const ICONS: Record<IconName, IconType> = {
   twitch: FaTwitch, youtube: FaYoutube, instagram: FaInstagram, x: FaXTwitter, tiktok: FaTiktok,
   discord: FaDiscord, whatsapp: FaWhatsapp, steam: FaSteam, kick: SiKick, spotify: FaSpotify,
-  email: FiMail, site: FiGlobe, gift: FiGift, shop: FiShoppingBag, coin: FaCoins, game: FaGamepad,
+  email: FiMail, site: FiGlobe, gift: FiGift, shop: FiShoppingBag, coin: PiPokerChipBold, game: FaGamepad,
 };
 
 export const ICON_LABELS: Record<IconName, string> = {
