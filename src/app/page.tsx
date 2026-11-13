@@ -4,6 +4,8 @@ import { ICONS } from "@/lib/icons";
 import HeroVideo from "./HeroVideo";
 
 const external = (url: string) => (url.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {});
+// Sem link salvo: mostra o item, mas sem levar a lugar nenhum
+const linkProps = (url: string) => (url ? { href: url, ...external(url) } : { role: "presentation" as const, "aria-disabled": true });
 
 export default async function Home() {
   const { profile, socials, links } = await getConfig();
@@ -48,7 +50,7 @@ export default async function Home() {
               {socials.map((s, i) => {
                 const Icon = ICONS[s.icon];
                 return (
-                  <a key={i} href={s.url} aria-label={s.label} {...external(s.url)} className="social-btn">
+                  <a key={i} aria-label={s.label} {...linkProps(s.url)} className="social-btn">
                     <Icon className="w-5 h-5" />
                   </a>
                 );
@@ -61,7 +63,7 @@ export default async function Home() {
               const Icon = l.icon ? ICONS[l.icon] : null;
               return (
                 <li key={i} className="animate-rise" style={{ animationDelay: `${100 + i * 60}ms` }}>
-                  <a href={l.url} {...external(l.url)}
+                  <a {...linkProps(l.url)}
                     className={`link-btn group w-full flex items-center gap-4 px-5 py-4 ${l.highlight ? "is-highlight" : ""}`}>
                     {Icon && <Icon className="w-5 h-5 shrink-0" />}
                     <span className="flex-1 min-w-0 text-left">

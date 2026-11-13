@@ -65,26 +65,17 @@ export function smartUrl(v: unknown, kind?: IconName): string {
   if (handle && kind && PROFILE_URL[kind] && !handle[1].includes("..") && !/\.(com|br|net|tv|gg|app)$/i.test(handle[1])) {
     return PROFILE_URL[kind]!(handle[1]);
   }
-  return safeUrl(s);
+  const safe = safeUrl(s);
+  if (safe) return safe;
+  // Qualquer outra coisa é aceita como foi digitada, menos esquemas perigosos (javascript:, data: ...)
+  return /^\s*[a-z][\w+.-]*:/i.test(s) ? "" : s;
 }
 
 // Confere tudo e devolve a lista do que está errado, em português, pra mostrar no painel.
 // Itens totalmente vazios (adicionados e não preenchidos) são só ignorados.
+// O painel salva qualquer coisa (pedido do dono). Mantido o formato com "problems" pra o painel continuar compatível.
 export function validateConfig(raw: unknown): { config: PageConfig; problems: string[] } {
-  const r = (raw ?? {}) as Record<string, any>;
-  const problems: string[] = [];
-  (Array.isArray(r.socials) ? r.socials : []).forEach((s: any, i: number) => {
-    const typed = str(s?.url);
-    if (typed && !smartUrl(typed, icon(s?.icon))) problems.push(`Rede ${i + 1} (${str(s?.label) || s?.icon}): link "${typed}" não é válido.`);
-  });
-  (Array.isArray(r.links) ? r.links : []).forEach((l: any, i: number) => {
-    const label = str(l?.label), typed = str(l?.url);
-    if (!label && !typed) return;
-    if (!label) problems.push(`Botão ${i + 1}: falta o texto do botão.`);
-    if (!typed) problems.push(`Botão ${i + 1} (${label}): falta o link.`);
-    else if (!smartUrl(typed, icon(l?.icon))) problems.push(`Botão ${i + 1} (${label}): link "${typed}" não é válido.`);
-  });
-  return { config: sanitizeConfig(raw), problems };
+  return { config: sanitizeConfig(raw), problems: [] };
 }
 
 export function sanitizeConfig(raw: unknown): PageConfig {
@@ -105,13 +96,13 @@ export function sanitizeConfig(raw: unknown): PageConfig {
     socials: (Array.isArray(r.socials) ? r.socials : []).slice(0, 12).flatMap((s: any) => {
       const i = icon(s?.icon);
       const url = smartUrl(s?.url, i);
-      return i && url ? [{ icon: i, url, label: str(s?.label, 40) || i }] : [];
+      return i ? [{ icon: i, url, label: str(s?.label, 40) || i }] : [];
     }),
     links: (Array.isArray(r.links) ? r.links : []).slice(0, 30).flatMap((l: any) => {
       const label = str(l?.label, 80);
       const url = smartUrl(l?.url, icon(l?.icon));
-      if (!label || !url) return [];
-      return [{ label, url, icon: icon(l?.icon), sub: str(l?.sub, 80) || undefined, highlight: !!l?.highlight }];
+      if (!label && !url) return [];
+      return [{ label: label || url, url, icon: icon(l?.icon), sub: str(l?.sub, 80) || undefined, highlight: !!l?.highlight }];
     }),
   };
 }
