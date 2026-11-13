@@ -127,7 +127,9 @@ body {
   50% { box-shadow: 0 0 0 8px rgba(227, 25, 31, 0); }
 }
 
-/* ---------- Painel /admin ---------- */
+/* ---------- Painel /admin ----------
+   Dentro de @layer components pra que as classes do Tailwind (w-36, flex-1...) possam sobrescrever. */
+@layer components {
 .btn-primary {
   border-radius: 12px;
   background: var(--accent);
@@ -181,6 +183,7 @@ body {
 
 .icon-btn { padding: .5rem; color: var(--muted); }
 .icon-btn:hover { color: var(--text); }
+}
 
 /* Barra de rolagem (mesmo esquema do barr4k, nas cores do tema) */
 html { scrollbar-color: var(--border) var(--bg); }

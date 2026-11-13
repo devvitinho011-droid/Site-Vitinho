@@ -153,11 +153,11 @@ export default function Editor({ initial, dbReady }: { initial: PageConfig; dbRe
         <section className="panel">
           <h2 className="panel-title">Redes (ícones redondos)</h2>
           {cfg.socials.map((s, i) => (
-            <div key={i} className="row">
-              <select className="field w-36 shrink-0" value={s.icon} onChange={(e) => editSocial(i, { icon: e.target.value as IconName, label: ICON_LABELS[e.target.value as IconName] })}>
+            <div key={i} className="flex flex-wrap sm:flex-nowrap items-center gap-2">
+              <select className="field flex-1 sm:flex-none sm:w-40" value={s.icon} onChange={(e) => editSocial(i, { icon: e.target.value as IconName, label: ICON_LABELS[e.target.value as IconName] })}>
                 {ICON_NAMES.map((n) => <option key={n} value={n}>{ICON_LABELS[n]}</option>)}
               </select>
-              <input className="field" placeholder="https://..." value={s.url} onChange={(e) => editSocial(i, { url: e.target.value })} />
+              <input className="field order-last sm:order-none basis-full sm:basis-auto sm:flex-1" placeholder="https://..." value={s.url} onChange={(e) => editSocial(i, { url: e.target.value })} />
               <RowActions onUp={() => setSocials(move(cfg.socials, i, -1))} onDown={() => setSocials(move(cfg.socials, i, 1))} onDelete={() => setSocials(cfg.socials.filter((_, k) => k !== i))} />
             </div>
           ))}
@@ -168,20 +168,20 @@ export default function Editor({ initial, dbReady }: { initial: PageConfig; dbRe
         <section className="panel">
           <h2 className="panel-title">Botões</h2>
           {cfg.links.map((l, i) => (
-            <div key={i} className="rounded-xl border border-white/10 bg-black/40 p-3 flex flex-col gap-2">
-              <div className="row">
-                <select className="field w-36 shrink-0" value={l.icon ?? ""} onChange={(e) => editLink(i, { icon: (e.target.value || undefined) as IconName | undefined })}>
+            <div key={i} className="rounded-xl border border-[var(--border)] bg-black/40 p-3 flex flex-col gap-2">
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
+                <select className="field flex-1 sm:flex-none sm:w-40" value={l.icon ?? ""} onChange={(e) => editLink(i, { icon: (e.target.value || undefined) as IconName | undefined })}>
                   <option value="">Sem ícone</option>
                   {ICON_NAMES.map((n) => <option key={n} value={n}>{ICON_LABELS[n]}</option>)}
                 </select>
-                <input className="field font-bold" placeholder="Texto do botão" value={l.label} onChange={(e) => editLink(i, { label: e.target.value })} />
+                <input className="field font-bold order-last sm:order-none basis-full sm:basis-auto sm:flex-1" placeholder="Texto do botão" value={l.label} onChange={(e) => editLink(i, { label: e.target.value })} />
                 <RowActions onUp={() => setLinks(move(cfg.links, i, -1))} onDown={() => setLinks(move(cfg.links, i, 1))} onDelete={() => setLinks(cfg.links.filter((_, k) => k !== i))} />
               </div>
               <input className="field" placeholder="Link (https://...)" value={l.url} onChange={(e) => editLink(i, { url: e.target.value })} />
               <input className="field text-sm" placeholder="Texto pequeno embaixo (opcional)" value={l.sub ?? ""} onChange={(e) => editLink(i, { sub: e.target.value })} />
               <label className="flex items-center gap-2 text-sm text-gray-300 select-none">
                 <input type="checkbox" className="accent-[var(--accent)] w-4 h-4" checked={!!l.highlight} onChange={(e) => editLink(i, { highlight: e.target.checked })} />
-                Destaque (roxo com anel RGB)
+                Destaque (botão vermelho pulsando)
               </label>
             </div>
           ))}
