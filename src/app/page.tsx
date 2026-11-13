@@ -18,8 +18,8 @@ export default async function Home() {
       {profile.heroVideo && (
         <section className="relative h-svh overflow-hidden">
           <HeroVideo desktop={profile.heroVideo} mobile={profile.heroVideoMobile} poster={profile.heroPoster} />
-          {/* Rolagem travada por 3,5 s na arte; depois desce sozinho pros links (em 1,6 s) e libera */}
-          <AutoScroll target="links" delay={3500} duration={1600} />
+          {/* Rolagem travada por 3,5 s na arte; depois desce sozinho pros links (em 1,3 s) e libera */}
+          <AutoScroll target="links" delay={3500} duration={1300} />
           <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-[var(--bg)] pointer-events-none" />
         </section>
       )}
