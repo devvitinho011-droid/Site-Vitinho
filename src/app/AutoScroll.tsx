@@ -6,7 +6,7 @@ import { useEffect } from "react";
 // Passado o tempo, a página desce sozinha até os links e a rolagem fica liberada de vez.
 const SCROLL_KEYS = new Set([" ", "PageDown", "PageUp", "ArrowDown", "ArrowUp", "End", "Home"]);
 
-export default function AutoScroll({ target, delay = 5000 }: { target: string; delay?: number }) {
+export default function AutoScroll({ target, delay = 5000, duration = 1600 }: { target: string; delay?: number; duration?: number }) {
   useEffect(() => {
     // Sempre começa no topo (o navegador costuma voltar pra posição antiga ao recarregar)
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
@@ -37,20 +37,37 @@ export default function AutoScroll({ target, delay = 5000 }: { target: string; d
       window.removeEventListener("keydown", blockKeys);
     };
 
+    let frame = 0;
     const timer = window.setTimeout(() => {
-      unlock();
       const el = document.getElementById(target);
-      if (!el) return;
+      if (!el) return unlock();
+      const end = el.getBoundingClientRect().top + window.scrollY;
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      // "instant" e não "auto": o <html> tem scroll-smooth, então "auto" também deslizaria
-      el.scrollIntoView({ behavior: reduce ? "instant" : "smooth", block: "start" });
+      if (reduce) {
+        window.scrollTo({ top: end, behavior: "instant" });
+        return unlock();
+      }
+      // Descida própria (o "smooth" do navegador é rápido demais): dura `duration` ms,
+      // começa e termina devagar. A rolagem só é liberada quando chega nos links.
+      const start = window.scrollY;
+      const t0 = performance.now();
+      const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+      const step = (now: number) => {
+        const t = Math.min(1, (now - t0) / duration);
+        // "instant": o <html> tem scroll-smooth, que atrapalharia cada passo
+        window.scrollTo({ top: start + (end - start) * ease(t), behavior: "instant" });
+        if (t < 1) frame = requestAnimationFrame(step);
+        else unlock();
+      };
+      frame = requestAnimationFrame(step);
     }, delay);
 
     return () => {
       window.clearTimeout(timer);
+      cancelAnimationFrame(frame);
       unlock();
     };
-  }, [target, delay]);
+  }, [target, delay, duration]);
 
   return null;
 }
